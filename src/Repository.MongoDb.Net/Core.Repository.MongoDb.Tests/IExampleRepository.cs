@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Repository
+namespace Core.Repository.MongoDb.Tests
 {
-    public interface IProductRepository: IRepository<Product>
+    public interface IExampleRepository: IRepository<ExampleEntity>
     {
 
     }

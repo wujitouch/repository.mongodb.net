@@ -104,6 +104,19 @@ namespace Core.Repository.MongoDb
         /// <exception cref="RepositoryException"></exception>
         public virtual async Task<T> Insert(T entity, CancellationToken cancellationToken = default(CancellationToken))
         {
+            return await Insert(entity, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Inserts the specified entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="options">Insert options to validate document or not</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="RepositoryException"></exception>
+        public virtual async Task<T> Insert(T entity, InsertOneOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
             Guard.ThrowIfNull(entity, "entity");
 
             if (entity.Id == null)
@@ -115,7 +128,7 @@ namespace Core.Repository.MongoDb
             {
                 entity.CreatedDate = DateTime.UtcNow;
                 entity.UpdatedDate = DateTime.UtcNow;
-                await this._collection.InsertOneAsync(entity, cancellationToken);
+                await this._collection.InsertOneAsync(entity, options, cancellationToken);
             }
             catch (MongoWriteException ex)
             {
@@ -147,7 +160,7 @@ namespace Core.Repository.MongoDb
             var idFilter = Builders<T>.Filter.Eq(e => e.Id, entity.Id); //Find entity with same Id
 
             //Consistency enforcement
-            if (!this.IgnoreVersion())
+            if (!this.IgnoreVersion)
             {
                 var versionLowerThan = Builders<T>.Filter.Lt(e => e.Version, entity.Version);
 
@@ -233,9 +246,9 @@ namespace Core.Repository.MongoDb
         /// Ignores the document version.
         /// </summary>
         /// <returns></returns>
-        public virtual bool IgnoreVersion()
+        public virtual bool IgnoreVersion
         {
-            return false;
+            get { return false; }
         }
     }
 }

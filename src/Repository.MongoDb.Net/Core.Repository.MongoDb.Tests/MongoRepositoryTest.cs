@@ -7,12 +7,12 @@ namespace Core.Repository.MongoDb.Tests
     [TestClass]
     public class MongoRepositoryTest
     {
-        private IRepository<Product> _prodRepository;
+        private IRepository<ExampleEntity> _prodRepository;
 
         public MongoRepositoryTest()
         {
             var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MongoDb.ConnectionString"].ToString();
-            this._prodRepository = new MongoRepository<Product>(connectionString);
+            this._prodRepository = new MongoRepository<ExampleEntity>(connectionString);
         }
 
         #region Get Method Tests
@@ -20,32 +20,32 @@ namespace Core.Repository.MongoDb.Tests
         [TestCategory("Integration")]
         public async Task Get_Valid_Entity_Success()
         {
-            var product = new Product()
+            var ExampleEntity = new ExampleEntity()
             {
-                Name = "Product" + DateTime.UtcNow.ToString()
+                Name = "ExampleEntity" + DateTime.UtcNow.ToString()
             };
 
-            var insertedProduct = await this._prodRepository.Insert(product);
-            var productResult = await this._prodRepository.Get(insertedProduct.Id);
+            var insertedExampleEntity = await this._prodRepository.Insert(ExampleEntity);
+            var ExampleEntityResult = await this._prodRepository.Get(insertedExampleEntity.Id);
 
-            Assert.AreEqual(productResult.Id, insertedProduct.Id);
-            Assert.AreEqual(productResult.Name, product.Name);
+            Assert.AreEqual(ExampleEntityResult.Id, insertedExampleEntity.Id);
+            Assert.AreEqual(ExampleEntityResult.Name, ExampleEntity.Name);
         }
 
         [TestMethod]
         [TestCategory("Integration")]
         public async Task Get_Invalid_Entity_Success()
         {
-            var productResult = await this._prodRepository.Get("SomeInvalidId");
-            Assert.IsNull(productResult);
+            var ExampleEntityResult = await this._prodRepository.Get("SomeInvalidId");
+            Assert.IsNull(ExampleEntityResult);
         }
 
         [TestMethod]
         [TestCategory("Integration")]
         public async Task Get_Null_Entity_Success()
         {
-            var productResult = await this._prodRepository.Get(null);
-            Assert.IsNull(productResult);
+            var ExampleEntityResult = await this._prodRepository.Get(null);
+            Assert.IsNull(ExampleEntityResult);
         }
 
         #endregion
@@ -55,37 +55,37 @@ namespace Core.Repository.MongoDb.Tests
         [TestCategory("Integration")]
         public async Task Delete_Valid_Entity_Success()
         {
-            var product = new Product()
+            var ExampleEntity = new ExampleEntity()
             {
-                Name = "Product" + DateTime.UtcNow.ToString()
+                Name = "ExampleEntity" + DateTime.UtcNow.ToString()
             };
 
-            var insertedProduct = await this._prodRepository.Insert(product);
-            var getProduct = await this._prodRepository.Get(insertedProduct.Id);
+            var insertedExampleEntity = await this._prodRepository.Insert(ExampleEntity);
+            var getExampleEntity = await this._prodRepository.Get(insertedExampleEntity.Id);
 
-            Assert.IsNotNull(getProduct);
-            Assert.AreEqual(getProduct.Id, insertedProduct.Id);
+            Assert.IsNotNull(getExampleEntity);
+            Assert.AreEqual(getExampleEntity.Id, insertedExampleEntity.Id);
 
-            var deletedProduct = await this._prodRepository.Delete(getProduct.Id);
+            var deletedExampleEntity = await this._prodRepository.Delete(getExampleEntity.Id);
 
-            Assert.IsNotNull(deletedProduct);
-            Assert.AreEqual(deletedProduct.Id, getProduct.Id);
+            Assert.IsNotNull(deletedExampleEntity);
+            Assert.AreEqual(deletedExampleEntity.Id, getExampleEntity.Id);
         }
 
         [TestMethod]
         [TestCategory("Integration")]
         public async Task Delete_Invalid_Entity_Success()
         {
-            var deletedProduct = await this._prodRepository.Delete("InvalidEntityId");
-            Assert.IsNull(deletedProduct);
+            var deletedExampleEntity = await this._prodRepository.Delete("InvalidEntityId");
+            Assert.IsNull(deletedExampleEntity);
         }
 
         [TestMethod]
         [TestCategory("Integration")]
         public async Task Delete_Null_Entity_Success()
         {
-            var deletedProduct = await this._prodRepository.Delete(null);
-            Assert.IsNull(deletedProduct);
+            var deletedExampleEntity = await this._prodRepository.Delete(null);
+            Assert.IsNull(deletedExampleEntity);
         }
 
         #endregion
@@ -95,9 +95,9 @@ namespace Core.Repository.MongoDb.Tests
         [TestCategory("Integration")]
         public async Task Insert_Empty_Entity_Success()
         {
-            var productResult = await this._prodRepository.Insert(new Product());
-            Assert.IsNotNull(productResult);
-            Assert.IsNotNull(productResult.Id);
+            var ExampleEntityResult = await this._prodRepository.Insert(new ExampleEntity());
+            Assert.IsNotNull(ExampleEntityResult);
+            Assert.IsNotNull(ExampleEntityResult.Id);
         }
 
         [TestMethod]
@@ -114,13 +114,13 @@ namespace Core.Repository.MongoDb.Tests
         public async Task Insert_Duplicated_Entity_Exception()
         {
             var prodId = "DuplicatedId" + DateTime.UtcNow.ToString();
-            var product = new Product()
+            var ExampleEntity = new ExampleEntity()
             {
                 Id = prodId
             };
 
-            await this._prodRepository.Insert(product);
-            await this._prodRepository.Insert(product);
+            await this._prodRepository.Insert(ExampleEntity);
+            await this._prodRepository.Insert(ExampleEntity);
         }
 
         #endregion
@@ -130,22 +130,22 @@ namespace Core.Repository.MongoDb.Tests
         [TestCategory("Integration")]
         public async Task Update_Valid_Entity_Success()
         {
-            var productName = "Product" + DateTime.UtcNow.ToString();
-            var updatedProductName = "Updated Name";
+            var ExampleEntityName = "ExampleEntity" + DateTime.UtcNow.ToString();
+            var updatedExampleEntityName = "Updated Name";
 
-            var product = new Product()
+            var ExampleEntity = new ExampleEntity()
             {
-                Name = productName
+                Name = ExampleEntityName
             };
 
-            var insertedProduct = await this._prodRepository.Insert(product);
-            var productResult = await this._prodRepository.Get(insertedProduct.Id);
-            productResult.Name = updatedProductName;
+            var insertedExampleEntity = await this._prodRepository.Insert(ExampleEntity);
+            var ExampleEntityResult = await this._prodRepository.Get(insertedExampleEntity.Id);
+            ExampleEntityResult.Name = updatedExampleEntityName;
 
-            var updatedProduct = await this._prodRepository.Update(productResult);
+            var updatedExampleEntity = await this._prodRepository.Update(ExampleEntityResult);
 
-            Assert.AreEqual(updatedProduct.Name, updatedProductName);
-            Assert.IsTrue(updatedProduct.Version > insertedProduct.Version);
+            Assert.AreEqual(updatedExampleEntity.Name, updatedExampleEntityName);
+            Assert.IsTrue(updatedExampleEntity.Version > insertedExampleEntity.Version);
         }
 
         [TestMethod]
@@ -153,19 +153,19 @@ namespace Core.Repository.MongoDb.Tests
         [ExpectedException(typeof(EntityConflictException))]
         public async Task Update_Version_Conflit_Entity_Exception()
         {
-            var productName = "Product" + DateTime.UtcNow.ToString();
+            var ExampleEntityName = "ExampleEntity" + DateTime.UtcNow.ToString();
 
-            var product = new Product()
+            var ExampleEntity = new ExampleEntity()
             {
-                Name = productName
+                Name = ExampleEntityName
             };
 
-            var insertedProduct = await this._prodRepository.Insert(product);
-            var productResult1 = await this._prodRepository.Get(insertedProduct.Id);
-            var productResult2 = await this._prodRepository.Get(insertedProduct.Id);
+            var insertedExampleEntity = await this._prodRepository.Insert(ExampleEntity);
+            var ExampleEntityResult1 = await this._prodRepository.Get(insertedExampleEntity.Id);
+            var ExampleEntityResult2 = await this._prodRepository.Get(insertedExampleEntity.Id);
 
-            var updatedProduct1 = await this._prodRepository.Update(productResult1);
-            var updatedProduct2 = await this._prodRepository.Update(productResult2);
+            var updatedExampleEntity1 = await this._prodRepository.Update(ExampleEntityResult1);
+            var updatedExampleEntity2 = await this._prodRepository.Update(ExampleEntityResult2);
         }
 
         [TestMethod]
